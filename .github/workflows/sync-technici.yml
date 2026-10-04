@@ -1,0 +1,84 @@
+name: Sync technician APKs
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 * * * *"
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download latest successful APK artifacts
+        env:
+          SOURCE_REPOS_TOKEN: ${{ secrets.SOURCE_REPOS_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "${SOURCE_REPOS_TOKEN:-}" ]; then
+            echo "SOURCE_REPOS_TOKEN nie je nastavený."
+            exit 1
+          fi
+
+          export GH_TOKEN="$SOURCE_REPOS_TOKEN"
+          mkdir -p downloads
+
+          sync_apk() {
+            REPO="$1"
+            ARTIFACT="$2"
+            OUTPUT="$3"
+            TMPDIR="tmp-${OUTPUT%.apk}"
+
+            RUN_ID=$(gh run list \
+              --repo "$REPO" \
+              --workflow android.yml \
+              --status success \
+              --limit 1 \
+              --json databaseId \
+              --jq '.[0].databaseId')
+
+            if [ -z "$RUN_ID" ] || [ "$RUN_ID" = "null" ]; then
+              echo "Nenašiel sa úspešný build pre $REPO"
+              exit 1
+            fi
+
+            rm -rf "$TMPDIR"
+            mkdir -p "$TMPDIR"
+            gh run download "$RUN_ID" \
+              --repo "$REPO" \
+              --name "$ARTIFACT" \
+              --dir "$TMPDIR"
+
+            APK=$(find "$TMPDIR" -type f -name '*.apk' | head -n 1)
+            if [ -z "$APK" ]; then
+              echo "V artefakte $ARTIFACT sa nenašlo APK."
+              exit 1
+            fi
+
+            cp "$APK" "downloads/$OUTPUT"
+            echo "$REPO -> downloads/$OUTPUT"
+          }
+
+          sync_apk "commanderservicestechnici-dot/Praca_Technikov" "Praca-Technikov-debug" "Praca-Technikov.apk"
+          sync_apk "commanderservicestechnici-dot/Rai" "RAI-International-debug" "RAI.apk"
+          sync_apk "commanderservicestechnici-dot/Datacho" "Datacho-Technik-debug" "Datacho-Technik.apk"
+
+      - name: Publish public stable links
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+
+          gh release view technici >/dev/null 2>&1 || \
+            gh release create technici \
+              --title "Commander aplikácie pre technikov" \
+              --notes "Automaticky synchronizované aktuálne APK z privátnych zdrojových repozitárov."
+
+          gh release upload technici \
+            downloads/Praca-Technikov.apk \
+            downloads/RAI.apk \
+            downloads/Datacho-Technik.apk \
+            --clobber
