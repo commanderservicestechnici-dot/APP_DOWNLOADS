@@ -8,4 +8,12 @@ Verejné úložisko APK súborov pre interné aplikácie Commander.
 - RAI: `https://github.com/commanderservicestechnici-dot/APP_DOWNLOADS/releases/download/technici/RAI.apk`
 - Datacho Technik: `https://github.com/commanderservicestechnici-dot/APP_DOWNLOADS/releases/download/technici/Datacho-Technik.apk`
 
-Release `technici` používa stále rovnaké názvy APK. Zdrojové repozitáre pri úspešnom builde prepíšu iba svoj vlastný APK súbor, takže odkazy sa nemenia.
+Release `technici` používa stále rovnaké názvy APK, takže odkazy sa nemenia.
+
+Workflow `Sync technician APKs` každú hodinu vezme APK z posledného úspešného buildu privátnych repozitárov Praca_Technikov, Rai a Datacho a nahrá ich do verejného Release `technici`.
+
+## Jednorazové nastavenie
+
+V tomto repozitári musí byť Actions secret `SOURCE_REPOS_TOKEN`. Ideálne použiť fine-grained Personal Access Token s prístupom iba k repozitárom `Praca_Technikov`, `Rai`, `Datacho` a s oprávnením **Actions: Read** a **Contents: Read**.
+
+Po pridaní secretu spusti Actions -> `Sync technician APKs` -> `Run workflow`. Potom už synchronizácia beží automaticky každú hodinu.
