@@ -72,6 +72,7 @@ jobs:
           sync_apk "commanderservicestechnici-dot/Praca_Technikov" "Praca-Technikov-debug" "Praca-Technikov.apk"
           sync_apk "commanderservicestechnici-dot/Rai" "RAI-International-debug" "RAI.apk"
           sync_apk "commanderservicestechnici-dot/Datacho" "Datacho-Technik-debug" "Datacho-Technik.apk"
+          sync_apk "commanderservicestechnici-dot/Aktivacia_Sim" "Aktivacia-SIM-debug" "Aktivacia-SIM.apk"
 
       - name: Publish public stable links
         env:
@@ -88,4 +89,5 @@ jobs:
             downloads/Praca-Technikov.apk \
             downloads/RAI.apk \
             downloads/Datacho-Technik.apk \
+            downloads/Aktivacia-SIM.apk \
             --clobber
