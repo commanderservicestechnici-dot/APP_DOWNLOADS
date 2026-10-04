@@ -1,5 +1,6 @@
 name: Sync technician APKs
 
+# Publishes the latest successful builds of managed Commander technician apps.
 on:
   push:
     branches: [ "main" ]
