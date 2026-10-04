@@ -12,6 +12,9 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Download latest successful APK artifacts
         env:
           SOURCE_REPOS_TOKEN: ${{ secrets.SOURCE_REPOS_TOKEN }}
