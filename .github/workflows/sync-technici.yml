@@ -1,7 +1,7 @@
 name: Sync technician APKs
 
 # Publishes the latest successful builds of managed Commander technician apps.
-# Manual refresh marker: Praca Technikov 1.10.0 final
+# Manual refresh marker: Praca Technikov 1.10.1
 on:
   push:
     branches: [ "main" ]
