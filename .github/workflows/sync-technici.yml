@@ -1,7 +1,7 @@
 name: Sync technician APKs
 
 # Publishes the latest successful builds of managed Commander technician apps.
-# Praca Technikov is copied from its stable `latest` release asset to avoid stale workflow artifacts. Current refresh: 1.10.4.
+# Praca Technikov is copied from its stable `latest` release asset to avoid stale workflow artifacts. Current refresh: 1.10.5.
 on:
   push:
     branches: [ "main" ]
