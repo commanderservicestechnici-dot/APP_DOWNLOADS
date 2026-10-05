@@ -1,7 +1,7 @@
 name: Sync technician APKs
 
 # Publishes the latest successful builds of managed Commander technician apps.
-# Manual refresh marker: Praca Technikov 1.10.1
+# Praca Technikov is copied from its stable `latest` release asset to avoid stale workflow artifacts.
 on:
   push:
     branches: [ "main" ]
@@ -21,7 +21,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Download latest successful APK artifacts
+      - name: Download current APKs
         env:
           SOURCE_REPOS_TOKEN: ${{ secrets.SOURCE_REPOS_TOKEN }}
         run: |
@@ -34,6 +34,33 @@ jobs:
 
           export GH_TOKEN="$SOURCE_REPOS_TOKEN"
           mkdir -p downloads
+
+          sync_release_apk() {
+            REPO="$1"
+            TAG="$2"
+            ASSET="$3"
+            OUTPUT="$4"
+            TMPDIR="tmp-release-${OUTPUT%.apk}"
+
+            rm -rf "$TMPDIR"
+            mkdir -p "$TMPDIR"
+
+            gh release download "$TAG" \
+              --repo "$REPO" \
+              --pattern "$ASSET" \
+              --dir "$TMPDIR" \
+              --clobber
+
+            APK="$TMPDIR/$ASSET"
+            if [ ! -f "$APK" ]; then
+              echo "V release $TAG sa nenašiel $ASSET pre $REPO"
+              exit 1
+            fi
+
+            cp "$APK" "downloads/$OUTPUT"
+            echo "$REPO release $TAG -> downloads/$OUTPUT"
+            sha256sum "downloads/$OUTPUT"
+          }
 
           sync_apk() {
             REPO="$1"
@@ -68,10 +95,11 @@ jobs:
             fi
 
             cp "$APK" "downloads/$OUTPUT"
-            echo "$REPO -> downloads/$OUTPUT"
+            echo "$REPO run $RUN_ID -> downloads/$OUTPUT"
+            sha256sum "downloads/$OUTPUT"
           }
 
-          sync_apk "commanderservicestechnici-dot/Praca_Technikov" "Praca-Technikov-debug" "Praca-Technikov.apk"
+          sync_release_apk "commanderservicestechnici-dot/Praca_Technikov" "latest" "Praca-Technikov.apk" "Praca-Technikov.apk"
           sync_apk "commanderservicestechnici-dot/Rai" "RAI-International-debug" "RAI.apk"
           sync_apk "commanderservicestechnici-dot/Datacho" "Datacho-Technik-debug" "Datacho-Technik.apk"
           sync_apk "commanderservicestechnici-dot/Aktivacia_Sim" "Aktivacia-SIM-debug" "Aktivacia-SIM.apk"
@@ -93,3 +121,8 @@ jobs:
             downloads/Datacho-Technik.apk \
             downloads/Aktivacia-SIM.apk \
             --clobber
+
+          echo "APP_DOWNLOADS Praca-Technikov.apk:"
+          gh release view technici \
+            --json assets \
+            --jq '.assets[] | select(.name=="Praca-Technikov.apk") | {name,size,digest,updatedAt}'
