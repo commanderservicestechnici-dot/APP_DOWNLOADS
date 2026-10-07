@@ -1,0 +1,125 @@
+name: Cleanup old Actions runs
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "20 2 * * *"
+
+permissions:
+  contents: read
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+
+    env:
+      OWNER: commanderservicestechnici-dot
+      GH_TOKEN: ${{ secrets.ACTIONS_CLEANUP_TOKEN }}
+
+    steps:
+      - name: Keep last 3 successful runs
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          REPOS=(
+            "Bungi-Darts-Android"
+            "Py-aplikacie"
+            "Bungi-Darts-OLD_Android"
+            "Nezabudni-Zoznam"
+            "Datacho"
+            "Rai"
+            "Praca_Technikov"
+            "Podporovane_vozidla"
+            "ALL_APP"
+            "APP_DOWNLOADS"
+            "Aktivacia_Sim"
+          )
+
+          TOTAL_DELETED=0
+
+          for REPO in "${REPOS[@]}"; do
+            FULL_REPO="$OWNER/$REPO"
+
+            echo ""
+            echo "========================================"
+            echo "$FULL_REPO"
+            echo "========================================"
+
+            TMP_JSON="$(mktemp)"
+
+            if ! gh api --paginate --slurp \
+              "repos/$FULL_REPO/actions/runs?per_page=100" \
+              > "$TMP_JSON"
+            then
+              echo "Nemám prístup k $FULL_REPO"
+              rm -f "$TMP_JSON"
+              continue
+            fi
+
+            mapfile -t KEEP_IDS < <(
+              jq -r '
+                [ .[].workflow_runs[] ]
+                | map(
+                    select(
+                      .status == "completed"
+                      and .conclusion == "success"
+                    )
+                  )
+                | sort_by(.created_at)
+                | reverse
+                | .[0:3]
+                | .[].id
+              ' "$TMP_JSON"
+            )
+
+            echo "Ponechávam:"
+            printf '%s\n' "${KEEP_IDS[@]}"
+
+            mapfile -t COMPLETED_IDS < <(
+              jq -r '
+                [ .[].workflow_runs[] ]
+                | map(select(.status == "completed"))
+                | .[].id
+              ' "$TMP_JSON"
+            )
+
+            REPO_DELETED=0
+
+            for RUN_ID in "${COMPLETED_IDS[@]}"; do
+
+              KEEP=false
+
+              for KEEP_ID in "${KEEP_IDS[@]}"; do
+                if [ "$RUN_ID" = "$KEEP_ID" ]; then
+                  KEEP=true
+                  break
+                fi
+              done
+
+              if [ "$KEEP" = true ]; then
+                echo "KEEP   $RUN_ID"
+                continue
+              fi
+
+              echo "DELETE $RUN_ID"
+
+              if gh api \
+                --method DELETE \
+                "repos/$FULL_REPO/actions/runs/$RUN_ID"
+              then
+                REPO_DELETED=$((REPO_DELETED + 1))
+                TOTAL_DELETED=$((TOTAL_DELETED + 1))
+              else
+                echo "Nepodarilo sa vymazať $RUN_ID"
+              fi
+            done
+
+            echo "$REPO: odstránené $REPO_DELETED"
+            rm -f "$TMP_JSON"
+          done
+
+          echo ""
+          echo "========================================"
+          echo "CELKOVO ODSTRÁNENÉ: $TOTAL_DELETED"
+          echo "========================================"
