@@ -99,10 +99,54 @@ jobs:
             sha256sum "downloads/$OUTPUT"
           }
 
+          sync_latest_run_apk() {
+            REPO="$1"
+            OUTPUT="$2"
+            TMPDIR="tmp-latest-${OUTPUT%.apk}"
+
+            RUN_ID=$(gh run list \
+              --repo "$REPO" \
+              --branch main \
+              --status success \
+              --limit 20 \
+              --json databaseId,createdAt \
+              --jq 'sort_by(.createdAt) | reverse | .[0].databaseId')
+
+            if [ -z "$RUN_ID" ] || [ "$RUN_ID" = "null" ]; then
+              echo "Nenašiel sa úspešný build pre $REPO"
+              exit 1
+            fi
+
+            rm -rf "$TMPDIR"
+            mkdir -p "$TMPDIR"
+            gh run download "$RUN_ID" \
+              --repo "$REPO" \
+              --dir "$TMPDIR"
+
+            APK=$(find "$TMPDIR" -type f -name '*.apk' | head -n 1)
+            if [ -z "$APK" ]; then
+              echo "V poslednom úspešnom rune $RUN_ID sa nenašlo APK pre $REPO."
+              exit 1
+            fi
+
+            cp "$APK" "downloads/$OUTPUT"
+            echo "$REPO latest successful run $RUN_ID -> downloads/$OUTPUT"
+            sha256sum "downloads/$OUTPUT"
+          }
+
+          # Stabilné release zdroje.
           sync_release_apk "commanderservicestechnici-dot/Praca_Technikov" "latest" "Praca-Technikov.apk" "Praca-Technikov.apk"
+          sync_release_apk "commanderservicestechnici-dot/Podporovane_vozidla" "latest" "Podporovane-vozidla-CAN.apk" "CMD-Obchod.apk"
+          sync_release_apk "commanderservicestechnici-dot/ALL_APP" "latest" "Commander-Apps.apk" "Commander-Apps.apk"
+
+          # Stabilné workflow artefakty.
           sync_apk "commanderservicestechnici-dot/Rai" "RAI-International-debug" "RAI.apk"
           sync_apk "commanderservicestechnici-dot/Datacho" "Datacho-Technik-debug" "Datacho-Technik.apk"
           sync_apk "commanderservicestechnici-dot/Aktivacia_Sim" "Aktivacia-SIM-debug" "Aktivacia-SIM.apk"
+
+          # Aplikácie, kde sa názov workflow/artefaktu mení medzi verziami.
+          sync_latest_run_apk "commanderservicestechnici-dot/Bungi-Darts-Android" "Bungi-Darts.apk"
+          sync_latest_run_apk "commanderservicestechnici-dot/Nezabudni-Zoznam" "Nezabudni.apk"
 
       - name: Publish public stable links
         env:
@@ -120,9 +164,13 @@ jobs:
             downloads/RAI.apk \
             downloads/Datacho-Technik.apk \
             downloads/Aktivacia-SIM.apk \
+            downloads/CMD-Obchod.apk \
+            downloads/Commander-Apps.apk \
+            downloads/Bungi-Darts.apk \
+            downloads/Nezabudni.apk \
             --clobber
 
-          echo "APP_DOWNLOADS Praca-Technikov.apk:"
+          echo "APP_DOWNLOADS assets:"
           gh release view technici \
             --json assets \
-            --jq '.assets[] | select(.name=="Praca-Technikov.apk") | {name,size,digest,updatedAt}'
+            --jq '.assets[] | {name,size,digest,updatedAt}'
