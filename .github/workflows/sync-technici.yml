@@ -54,7 +54,7 @@ jobs:
             APK="$TMPDIR/$ASSET"
             if [ ! -f "$APK" ]; then
               echo "V release $TAG sa nenašiel $ASSET pre $REPO"
-              exit 1
+              return 1
             fi
 
             cp "$APK" "downloads/$OUTPUT"
@@ -78,7 +78,7 @@ jobs:
 
             if [ -z "$RUN_ID" ] || [ "$RUN_ID" = "null" ]; then
               echo "Nenašiel sa úspešný build pre $REPO"
-              exit 1
+              return 1
             fi
 
             rm -rf "$TMPDIR"
@@ -91,7 +91,7 @@ jobs:
             APK=$(find "$TMPDIR" -type f -name '*.apk' | head -n 1)
             if [ -z "$APK" ]; then
               echo "V artefakte $ARTIFACT sa nenašlo APK."
-              exit 1
+              return 1
             fi
 
             cp "$APK" "downloads/$OUTPUT"
@@ -114,7 +114,7 @@ jobs:
 
             if [ -z "$RUN_ID" ] || [ "$RUN_ID" = "null" ]; then
               echo "Nenašiel sa úspešný build pre $REPO"
-              exit 1
+              return 1
             fi
 
             rm -rf "$TMPDIR"
@@ -126,7 +126,7 @@ jobs:
             APK=$(find "$TMPDIR" -type f -name '*.apk' | head -n 1)
             if [ -z "$APK" ]; then
               echo "V poslednom úspešnom rune $RUN_ID sa nenašlo APK pre $REPO."
-              exit 1
+              return 1
             fi
 
             cp "$APK" "downloads/$OUTPUT"
@@ -135,18 +135,18 @@ jobs:
           }
 
           # Stabilné release zdroje.
-          sync_release_apk "commanderservicestechnici-dot/Praca_Technikov" "latest" "Praca-Technikov.apk" "Praca-Technikov.apk"
-          sync_release_apk "commanderservicestechnici-dot/Podporovane_vozidla" "latest" "Podporovane-vozidla-CAN.apk" "CMD-Obchod.apk"
-          sync_release_apk "commanderservicestechnici-dot/ALL_APP" "latest" "Commander-Apps.apk" "Commander-Apps.apk"
+          sync_release_apk "commanderservicestechnici-dot/Praca_Technikov" "latest" "Praca-Technikov.apk" "Praca-Technikov.apk" || echo "::warning::Práca Technikov sa nepodarila synchronizovať."
+          sync_release_apk "commanderservicestechnici-dot/Podporovane_vozidla" "latest" "Podporovane-vozidla-CAN.apk" "CMD-Obchod.apk" || echo "::warning::CMD Obchod sa nepodaril synchronizovať."
+          sync_release_apk "commanderservicestechnici-dot/ALL_APP" "latest" "Commander-Apps.apk" "Commander-Apps.apk" || echo "::warning::Commander Apps sa nepodaril synchronizovať."
 
           # Stabilné workflow artefakty.
-          sync_apk "commanderservicestechnici-dot/Rai" "RAI-International-debug" "RAI.apk"
-          sync_apk "commanderservicestechnici-dot/Datacho" "Datacho-Technik-debug" "Datacho-Technik.apk"
-          sync_apk "commanderservicestechnici-dot/Aktivacia_Sim" "Aktivacia-SIM-debug" "Aktivacia-SIM.apk"
+          sync_apk "commanderservicestechnici-dot/Rai" "RAI-International-debug" "RAI.apk" || echo "::warning::RAI sa nepodarilo synchronizovať."
+          sync_apk "commanderservicestechnici-dot/Datacho" "Datacho-Technik-debug" "Datacho-Technik.apk" || echo "::warning::Datacho Technik sa nepodarilo synchronizovať."
+          sync_apk "commanderservicestechnici-dot/Aktivacia_Sim" "Aktivacia-SIM-debug" "Aktivacia-SIM.apk" || echo "::warning::Aktivácia SIM sa nepodarila synchronizovať."
 
           # Aplikácie, kde sa názov workflow/artefaktu mení medzi verziami.
-          sync_latest_run_apk "commanderservicestechnici-dot/Bungi-Darts-Android" "Bungi-Darts.apk"
-          sync_latest_run_apk "commanderservicestechnici-dot/Nezabudni-Zoznam" "Nezabudni.apk"
+          sync_latest_run_apk "commanderservicestechnici-dot/Bungi-Darts-Android" "Bungi-Darts.apk" || echo "::warning::Bungi Darts sa nepodaril synchronizovať."
+          sync_latest_run_apk "commanderservicestechnici-dot/Nezabudni-Zoznam" "Nezabudni.apk" || echo "::warning::Nezabudni sa nepodarilo synchronizovať."
 
       - name: Publish public stable links
         env:
@@ -159,7 +159,8 @@ jobs:
               --title "Commander aplikácie pre technikov" \
               --notes "Automaticky synchronizované aktuálne APK z privátnych zdrojových repozitárov."
 
-          gh release upload technici \
+          UPLOADS=()
+          for APK in \
             downloads/Praca-Technikov.apk \
             downloads/RAI.apk \
             downloads/Datacho-Technik.apk \
@@ -167,8 +168,18 @@ jobs:
             downloads/CMD-Obchod.apk \
             downloads/Commander-Apps.apk \
             downloads/Bungi-Darts.apk \
-            downloads/Nezabudni.apk \
-            --clobber
+            downloads/Nezabudni.apk
+          do
+            if [ -f "$APK" ]; then
+              UPLOADS+=("$APK")
+            fi
+          done
+
+          if [ "${#UPLOADS[@]}" -gt 0 ]; then
+            gh release upload technici "${UPLOADS[@]}" --clobber
+          else
+            echo "Nebolo stiahnuté žiadne APK; existujúci verejný release zostáva bez zmeny."
+          fi
 
           echo "APP_DOWNLOADS assets:"
           gh release view technici \
