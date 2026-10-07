@@ -12,6 +12,7 @@ Verejný distribučný repozitár pre interné Commander APK. Zdrojové aplikác
 ## Synchronizácia APK
 `Sync technician APKs`:
 - automaticky približne každých 5 minút,
+- okamžite cez `repository_dispatch` event `sync-technici` zo zdrojových repozitárov,
 - dá sa spustiť ručne,
 - pri jednej chybnej/neprístupnej aplikácii ostatné pokračujú,
 - prepíše asset s rovnakým názvom, takže URL zostáva stabilná.
@@ -60,3 +61,8 @@ Pravidlo:
 - Ručne nahraté cudzie utility v release nemaž pri bežnej sync úprave.
 - Jedna nedostupná app nesmie zablokovať ostatné.
 - Pri pridaní novej app doplniť source repo, output názov, release upload a README/HANDOFF.
+
+
+## Priame spustenie zo source repo
+Workflow `sync-technici.yml` prijíma `repository_dispatch` s typom `sync-technici`.
+Zdrojová aplikácia môže po úspešnom release poslať dispatch a tým spustiť verejnú synchronizáciu hneď; 5-minútový cron zostáva ako záloha.

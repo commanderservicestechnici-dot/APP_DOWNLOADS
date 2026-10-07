@@ -8,11 +8,17 @@ on:
     paths:
       - ".github/workflows/sync-technici.yml"
   workflow_dispatch:
+  repository_dispatch:
+    types: [sync-technici]
   schedule:
     - cron: "*/5 * * * *"
 
 permissions:
   contents: write
+
+concurrency:
+  group: sync-technician-apks
+  cancel-in-progress: false
 
 jobs:
   sync:
