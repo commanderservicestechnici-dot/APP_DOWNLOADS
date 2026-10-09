@@ -1,7 +1,7 @@
 name: Sync technician APKs
 
 # Publishes the latest successful builds of managed Commander technician apps.
-# Praca Technikov is copied from its stable `latest` release asset to avoid stale workflow artifacts. Current refresh: 1.10.8.
+# Praca Technikov is copied from its stable `latest` release asset to avoid stale workflow artifacts. Current refresh: 1.10.9.
 on:
   push:
     branches: [ "main" ]
@@ -142,6 +142,19 @@ jobs:
 
           # Stabilné release zdroje.
           sync_release_apk "commanderservicestechnici-dot/Praca_Technikov" "latest" "Praca-Technikov.apk" "Praca-Technikov.apk" || echo "::warning::Práca Technikov sa nepodarila synchronizovať."
+
+          # Publish machine-readable version metadata together with the exact synced APK.
+          # Name of the source 'latest' release is 'Práca Technikov 1.10.9'.
+          if [ -f downloads/Praca-Technikov.apk ]; then
+            if TECH_VERSION=$(gh release view latest \
+              --repo commanderservicestechnici-dot/Praca_Technikov \
+              --json name --jq '.name' | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -n 1); then
+              printf '%s\n' "$TECH_VERSION" > downloads/Praca-Technikov-version.txt
+              echo "Práca Technikov available version: $TECH_VERSION"
+            else
+              echo "::warning::Nepodarilo sa určiť verziu Práca Technikov zo source release."
+            fi
+          fi
           sync_release_apk "commanderservicestechnici-dot/Podporovane_vozidla" "latest" "Podporovane-vozidla-CAN.apk" "CMD-Obchod.apk" || echo "::warning::CMD Obchod sa nepodaril synchronizovať."
           sync_release_apk "commanderservicestechnici-dot/ALL_APP" "latest" "Commander-Apps.apk" "Commander-Apps.apk" || echo "::warning::Commander Apps sa nepodaril synchronizovať."
 
@@ -168,6 +181,7 @@ jobs:
           UPLOADS=()
           for APK in \
             downloads/Praca-Technikov.apk \
+            downloads/Praca-Technikov-version.txt \
             downloads/RAI.apk \
             downloads/Datacho-Technik.apk \
             downloads/Aktivacia-SIM.apk \

@@ -7,6 +7,7 @@ Verejné úložisko APK súborov pre interné aplikácie Commander.
 Release `technici` používa stále rovnaké názvy súborov. Odkazy sa preto nemenia ani po vydaní novej verzie a môžu byť priamo uložené v Google Sheete `ALL_APP`.
 
 - Práca Technikov: `https://github.com/commanderservicestechnici-dot/APP_DOWNLOADS/releases/download/technici/Praca-Technikov.apk`
+- Práca Technikov – číslo poslednej vydanej verzie (`*.txt`, automaticky zo source release): `https://github.com/commanderservicestechnici-dot/APP_DOWNLOADS/releases/download/technici/Praca-Technikov-version.txt`
 - RAI: `https://github.com/commanderservicestechnici-dot/APP_DOWNLOADS/releases/download/technici/RAI.apk`
 - Datacho Technik: `https://github.com/commanderservicestechnici-dot/APP_DOWNLOADS/releases/download/technici/Datacho-Technik.apk`
 - Aktivácia SIM: `https://github.com/commanderservicestechnici-dot/APP_DOWNLOADS/releases/download/technici/Aktivacia-SIM.apk`

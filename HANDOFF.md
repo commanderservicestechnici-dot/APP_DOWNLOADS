@@ -66,3 +66,8 @@ Pravidlo:
 ## Priame spustenie zo source repo
 Workflow `sync-technici.yml` prijíma `repository_dispatch` s typom `sync-technici`.
 Zdrojová aplikácia môže po úspešnom release poslať dispatch a tým spustiť verejnú synchronizáciu hneď; 5-minútový cron zostáva ako záloha.
+
+## Aktualizácie aplikácie Práca Technikov 1.10.9
+- Workflow synchronizuje `Praca-Technikov.apk` aj `Praca-Technikov-version.txt` do verejného release `technici`.
+- Súbor verzie vzniká iba po úspešnom stiahnutí APK a obsahuje hodnotu z názvu vydaného source release `latest`.
+- Aplikácia kontroluje verziu z verejného súboru po spustení/obnovení; prípadne používa `ALL_APP` ako zálohu.
