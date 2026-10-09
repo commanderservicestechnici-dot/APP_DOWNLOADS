@@ -1,7 +1,7 @@
 name: Sync technician APKs
 
 # Publishes the latest successful builds of managed Commander technician apps.
-# Bungi v0.17.37: synchronize the signed apk-latest Release and version metadata.
+# Bungi v0.17.38: synchronize the fixed offline Screen 3 APK and matching version metadata.
 # Praca Technikov is copied from its stable `latest` release asset to avoid stale workflow artifacts. Current refresh: 1.10.9 (APK + matching version metadata).
 on:
   push:
