@@ -148,6 +148,28 @@ jobs:
             sha256sum "downloads/$OUTPUT"
           }
 
+          sync_release_bungi() {
+            # Download the APK and version from the SAME private GitHub release.
+            # Actions artifact quota does not affect GitHub Release assets.
+            TMPDIR="tmp-bungi-release"
+            rm -rf "$TMPDIR"
+            mkdir -p "$TMPDIR"
+            gh release download apk-latest \
+              --repo "commanderservicestechnici-dot/Bungi-Darts-Android" \
+              --pattern 'Bungi-Darts*' \
+              --dir "$TMPDIR"
+            if [ ! -s "$TMPDIR/Bungi-Darts.apk" ] ||
+               [ ! -s "$TMPDIR/Bungi-Darts-version.txt" ] ||
+               ! grep -Eq '^[0-9]+$' "$TMPDIR/Bungi-Darts-version.txt"; then
+              echo "::warning::Bungi APK or version metadata missing in source release"
+              return 1
+            fi
+            cp "$TMPDIR/Bungi-Darts.apk" downloads/Bungi-Darts.apk
+            cp "$TMPDIR/Bungi-Darts-version.txt" downloads/Bungi-Darts-version.txt
+            echo "Bungi signed release -> downloads/Bungi-Darts.apk"
+            sha256sum downloads/Bungi-Darts.apk
+          }
+
           # Stabilné release zdroje.
           sync_release_apk "commanderservicestechnici-dot/Praca_Technikov" "latest" "Praca-Technikov.apk" "Praca-Technikov.apk" || echo "::warning::Práca Technikov sa nepodarila synchronizovať."
 
@@ -172,7 +194,7 @@ jobs:
           sync_apk "commanderservicestechnici-dot/Aktivacia_Sim" "Aktivacia-SIM-debug" "Aktivacia-SIM.apk" || echo "::warning::Aktivácia SIM sa nepodarila synchronizovať."
 
           # Aplikácie, kde sa názov workflow/artefaktu mení medzi verziami.
-          sync_latest_run_apk "commanderservicestechnici-dot/Bungi-Darts-Android" "Bungi-Darts.apk" || echo "::warning::Bungi Darts sa nepodaril synchronizovať."
+          sync_release_bungi || echo "::warning::Bungi Darts sa nepodaril synchronizovať."
           sync_latest_run_apk "commanderservicestechnici-dot/Nezabudni-Zoznam" "Nezabudni.apk" || echo "::warning::Nezabudni sa nepodarilo synchronizovať."
 
       - name: Publish public stable links
