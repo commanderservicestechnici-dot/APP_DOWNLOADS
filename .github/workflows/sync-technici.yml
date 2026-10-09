@@ -135,81 +135,10 @@ jobs:
               return 1
             fi
 
-            # Bungi updater consumes version metadata from the SAME successful build
-            # as the APK; never publish an APK without matching version code.
             if [ "$REPO" = "commanderservicestechnici-dot/Bungi-Darts-Android" ]; then
               VERSION_FILE=$(find "$TMPDIR" -type f -name 'Bungi-Darts-version.txt' | head -n 1)
-              if [ -z "$VERSION_FILE" ] || ! grep -Eq '^[0-9]+
-          }
-
-          # Stabilné release zdroje.
-          sync_release_apk "commanderservicestechnici-dot/Praca_Technikov" "latest" "Praca-Technikov.apk" "Praca-Technikov.apk" || echo "::warning::Práca Technikov sa nepodarila synchronizovať."
-
-          # Publish machine-readable version metadata together with the exact synced APK.
-          # Name of the source 'latest' release is 'Práca Technikov 1.10.9'.
-          if [ -f downloads/Praca-Technikov.apk ]; then
-            if TECH_VERSION=$(gh release view latest \
-              --repo commanderservicestechnici-dot/Praca_Technikov \
-              --json name --jq '.name' | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -n 1); then
-              printf '%s\n' "$TECH_VERSION" > downloads/Praca-Technikov-version.txt
-              echo "Práca Technikov available version: $TECH_VERSION"
-            else
-              echo "::warning::Nepodarilo sa určiť verziu Práca Technikov zo source release."
-            fi
-          fi
-          sync_release_apk "commanderservicestechnici-dot/Podporovane_vozidla" "latest" "Podporovane-vozidla-CAN.apk" "CMD-Obchod.apk" || echo "::warning::CMD Obchod sa nepodaril synchronizovať."
-          sync_release_apk "commanderservicestechnici-dot/ALL_APP" "latest" "Commander-Apps.apk" "Commander-Apps.apk" || echo "::warning::Commander Apps sa nepodaril synchronizovať."
-
-          # Stabilné workflow artefakty.
-          sync_apk "commanderservicestechnici-dot/Rai" "RAI-International-debug" "RAI.apk" || echo "::warning::RAI sa nepodarilo synchronizovať."
-          sync_apk "commanderservicestechnici-dot/Datacho" "Datacho-Technik-debug" "Datacho-Technik.apk" || echo "::warning::Datacho Technik sa nepodarilo synchronizovať."
-          sync_apk "commanderservicestechnici-dot/Aktivacia_Sim" "Aktivacia-SIM-debug" "Aktivacia-SIM.apk" || echo "::warning::Aktivácia SIM sa nepodarila synchronizovať."
-
-          # Aplikácie, kde sa názov workflow/artefaktu mení medzi verziami.
-          sync_latest_run_apk "commanderservicestechnici-dot/Bungi-Darts-Android" "Bungi-Darts.apk" || echo "::warning::Bungi Darts sa nepodaril synchronizovať."
-          sync_latest_run_apk "commanderservicestechnici-dot/Nezabudni-Zoznam" "Nezabudni.apk" || echo "::warning::Nezabudni sa nepodarilo synchronizovať."
-
-      - name: Publish public stable links
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          set -euo pipefail
-
-          gh release view technici >/dev/null 2>&1 || \
-            gh release create technici \
-              --title "Commander aplikácie pre technikov" \
-              --notes "Automaticky synchronizované aktuálne APK z privátnych zdrojových repozitárov."
-
-          UPLOADS=()
-          for APK in \
-            downloads/Praca-Technikov.apk \
-            downloads/Praca-Technikov-version.txt \
-            downloads/RAI.apk \
-            downloads/Datacho-Technik.apk \
-            downloads/Aktivacia-SIM.apk \
-            downloads/CMD-Obchod.apk \
-            downloads/Commander-Apps.apk \
-            downloads/Bungi-Darts.apk \
-            downloads/Bungi-Darts-version.txt \
-            downloads/Nezabudni.apk
-          do
-            if [ -f "$APK" ]; then
-              UPLOADS+=("$APK")
-            fi
-          done
-
-          if [ "${#UPLOADS[@]}" -gt 0 ]; then
-            gh release upload technici "${UPLOADS[@]}" --clobber
-          else
-            echo "Nebolo stiahnuté žiadne APK; existujúci verejný release zostáva bez zmeny."
-          fi
-
-          echo "APP_DOWNLOADS assets:"
-          gh release view technici \
-            --json assets \
-            --jq '.assets[] | {name,size,digest,updatedAt}'
- "$VERSION_FILE"; then
-                echo "::warning::Bungi build does not contain matching update version metadata"
+              if [ -z "$VERSION_FILE" ] || ! grep -Eq '^[0-9]+$' "$VERSION_FILE"; then
+                echo "::warning::Bungi build missing matching version metadata"
                 return 1
               fi
               cp "$VERSION_FILE" downloads/Bungi-Darts-version.txt
@@ -267,6 +196,7 @@ jobs:
             downloads/CMD-Obchod.apk \
             downloads/Commander-Apps.apk \
             downloads/Bungi-Darts.apk \
+            downloads/Bungi-Darts-version.txt \
             downloads/Nezabudni.apk
           do
             if [ -f "$APK" ]; then
