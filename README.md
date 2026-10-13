@@ -12,6 +12,7 @@ Release `technici` používa stále rovnaké názvy súborov. Odkazy sa preto ne
 - Datacho Technik: `https://github.com/commanderservicestechnici-dot/APP_DOWNLOADS/releases/download/technici/Datacho-Technik.apk`
 - Aktivácia SIM: `https://github.com/commanderservicestechnici-dot/APP_DOWNLOADS/releases/download/technici/Aktivacia-SIM.apk`
 - CMD Obchod: `https://github.com/commanderservicestechnici-dot/APP_DOWNLOADS/releases/download/technici/CMD-Obchod.apk`
+- CMD Obchod – verzia podpísanej APK: `https://github.com/commanderservicestechnici-dot/APP_DOWNLOADS/releases/download/technici/CMD-Obchod-version.txt`
 - Commander Apps: `https://github.com/commanderservicestechnici-dot/APP_DOWNLOADS/releases/download/technici/Commander-Apps.apk`
 - Bungi Darts: `https://github.com/commanderservicestechnici-dot/APP_DOWNLOADS/releases/download/technici/Bungi-Darts.apk`
 - Nezabudni: `https://github.com/commanderservicestechnici-dot/APP_DOWNLOADS/releases/download/technici/Nezabudni.apk`

@@ -17,6 +17,15 @@ Verejný distribučný repozitár pre interné Commander APK. Zdrojové aplikác
 - pri jednej chybnej/neprístupnej aplikácii ostatné pokračujú,
 - prepíše asset s rovnakým názvom, takže URL zostáva stabilná.
 
+## CMD Obchod auto-update od 1.5.43
+Pri synchronizácii CMD Obchod berie workflow z rovnakého súkromného release
+`latest` podpísaný `Podporovane-vozidla-CAN.apk` aj `CMD-Obchod-version.txt`.
+Oba súbory sa musia úspešne stiahnuť, inak sa pôvodná verejná APK nechá bez zmeny.
+Verejný version text sa publikuje ako asset s názvom
+`CMD-Obchod-version.txt`. Aplikácia kontroluje najskôr tento súbor a až potom
+záložný `ALL_APP` v Google Sheete. Verzia je vyčítaná zo zostavenej APK.
+Existujúce linky a ostatné publikované aplikácie sa nemenia.
+
 ## Stabilné verejné linky
 - Práca Technikov: `https://github.com/commanderservicestechnici-dot/APP_DOWNLOADS/releases/download/technici/Praca-Technikov.apk`
 - RAI: `https://github.com/commanderservicestechnici-dot/APP_DOWNLOADS/releases/download/technici/RAI.apk`
