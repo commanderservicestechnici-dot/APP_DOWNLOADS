@@ -250,8 +250,8 @@ jobs:
 
           # Stabilné workflow artefakty.
           sync_apk "commanderservicestechnici-dot/Rai" "RAI-International-debug" "RAI.apk" || echo "::warning::RAI sa nepodarilo synchronizovať."
-          # Datacho is published as a private GitHub Release instead of Actions artifacts
-          # (avoids the source repository's artifact storage quota).
+          # Datacho 1.7.4+ uses a stable private Release instead of quota-limited Actions artifacts.
+          # Synchronize signed APK and its matching version file as one pair.
           sync_datacho_release || echo "::warning::Datacho Technik sa nepodarilo synchronizovať; ponechávam predošlé verejné APK."
           sync_apk "commanderservicestechnici-dot/Aktivacia_Sim" "Aktivacia-SIM-debug" "Aktivacia-SIM.apk" || echo "::warning::Aktivácia SIM sa nepodarila synchronizovať."
 
