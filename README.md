@@ -10,6 +10,7 @@ Release `technici` používa stále rovnaké názvy súborov. Odkazy sa preto ne
 - Práca Technikov – číslo poslednej vydanej verzie (`*.txt`, automaticky zo source release): `https://github.com/commanderservicestechnici-dot/APP_DOWNLOADS/releases/download/technici/Praca-Technikov-version.txt`
 - RAI: `https://github.com/commanderservicestechnici-dot/APP_DOWNLOADS/releases/download/technici/RAI.apk`
 - Datacho Technik: `https://github.com/commanderservicestechnici-dot/APP_DOWNLOADS/releases/download/technici/Datacho-Technik.apk`
+- Datacho Technik – posledná verzia: `https://github.com/commanderservicestechnici-dot/APP_DOWNLOADS/releases/download/technici/Datacho-Technik-version.txt`
 - Aktivácia SIM: `https://github.com/commanderservicestechnici-dot/APP_DOWNLOADS/releases/download/technici/Aktivacia-SIM.apk`
 - CMD Obchod: `https://github.com/commanderservicestechnici-dot/APP_DOWNLOADS/releases/download/technici/CMD-Obchod.apk`
 - CMD Obchod – verzia podpísanej APK: `https://github.com/commanderservicestechnici-dot/APP_DOWNLOADS/releases/download/technici/CMD-Obchod-version.txt`
@@ -29,7 +30,7 @@ Používané zdroje:
 - `Podporovane_vozidla` – stabilný release `latest`
 - `ALL_APP` – stabilný release `latest`
 - `Rai` – posledný úspešný artifact z `android.yml`
-- `Datacho` – stabilný súkromný GitHub Release `latest` (`Datacho-Technik.apk`); bez závislosti od kvóty Actions artefaktov
+- `Datacho` – stabilný súkromný GitHub Release `latest` (`Datacho-Technik.apk` aj `Datacho-Technik-version.txt`); kontrola aktualizácií od 1.7.4 priamo cez GitHub
 - `Aktivacia_Sim` – posledný úspešný artifact z `android.yml`
 - `Bungi-Darts-Android` – APK z posledného úspešného workflow runu
 - `Nezabudni-Zoznam` – APK z posledného úspešného workflow runu

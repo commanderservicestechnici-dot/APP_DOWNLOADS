@@ -10,7 +10,7 @@ Verejný distribučný repozitár pre interné Commander APK. Zdrojové aplikác
 - `.github/workflows/cleanup-actions.yml` — centrálne čistenie GitHub Actions runov.
 
 ## Synchronizácia APK
-Datacho Technik sa preberá zo súkromného GitHub Release `latest` v repozitári `Datacho` (asset `Datacho-Technik.apk`), nie z Actions artefaktu. Tento spôsob obchádza naplnenú kvótu úložiska GitHub Actions. Verejná cesta `technici/Datacho-Technik.apk` zostáva stabilná.
+Datacho Technik sa preberá zo súkromného GitHub Release `latest` v repozitári `Datacho` (asset `Datacho-Technik.apk` spolu s `Datacho-Technik-version.txt`), nie z Actions artefaktu. Publikujú sa iba vtedy, keď sú oba súbory platné. Stabilné verejné cesty `technici/Datacho-Technik.apk` a `technici/Datacho-Technik-version.txt` umožňujú kontrolu aktualizácií od verzie 1.7.4 priamo z GitHubu.
 
 `Sync technician APKs`:
 - automaticky približne každých 5 minút,
@@ -32,6 +32,7 @@ Existujúce linky a ostatné publikované aplikácie sa nemenia.
 - Práca Technikov: `https://github.com/commanderservicestechnici-dot/APP_DOWNLOADS/releases/download/technici/Praca-Technikov.apk`
 - RAI: `https://github.com/commanderservicestechnici-dot/APP_DOWNLOADS/releases/download/technici/RAI.apk`
 - Datacho Technik: `https://github.com/commanderservicestechnici-dot/APP_DOWNLOADS/releases/download/technici/Datacho-Technik.apk`
+- Datacho Technik verzia: `https://github.com/commanderservicestechnici-dot/APP_DOWNLOADS/releases/download/technici/Datacho-Technik-version.txt`
 - Aktivácia SIM: `https://github.com/commanderservicestechnici-dot/APP_DOWNLOADS/releases/download/technici/Aktivacia-SIM.apk`
 - CMD Obchod: `https://github.com/commanderservicestechnici-dot/APP_DOWNLOADS/releases/download/technici/CMD-Obchod.apk`
 - Commander Apps: `https://github.com/commanderservicestechnici-dot/APP_DOWNLOADS/releases/download/technici/Commander-Apps.apk`

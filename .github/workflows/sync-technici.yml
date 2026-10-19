@@ -69,6 +69,35 @@ jobs:
             sha256sum "downloads/$OUTPUT"
           }
 
+          sync_datacho_release() {
+            # APK + version.txt must come from the same source release.
+            REPO="commanderservicestechnici-dot/Datacho"
+            TMPDIR="tmp-release-Datacho-Technik"
+            rm -rf "$TMPDIR"
+            mkdir -p "$TMPDIR"
+            gh release download latest \
+              --repo "$REPO" \
+              --pattern "Datacho-Technik.apk" \
+              --pattern "Datacho-Technik-version.txt" \
+              --dir "$TMPDIR" --clobber
+
+            APK="$TMPDIR/Datacho-Technik.apk"
+            VERSION_FILE="$TMPDIR/Datacho-Technik-version.txt"
+            if [ ! -s "$APK" ] || [ ! -s "$VERSION_FILE" ]; then
+              echo "::warning::Datacho APK or version file missing; keeping previous public release."
+              return 1
+            fi
+            VERSION=$(tr -d '\r\n' < "$VERSION_FILE")
+            if ! printf '%s' "$VERSION" | grep -Eq '^[0-9]+(\.[0-9]+){2,3}$'; then
+              echo "::warning::Invalid Datacho version: $VERSION"
+              return 1
+            fi
+            cp "$APK" downloads/Datacho-Technik.apk
+            printf '%s\n' "$VERSION" > downloads/Datacho-Technik-version.txt
+            echo "Datacho source release latest -> APK and version $VERSION"
+            sha256sum downloads/Datacho-Technik.apk
+          }
+
           sync_release_cmd_obchod() {
             REPO="commanderservicestechnici-dot/Podporovane_vozidla"
             TMPDIR="tmp-release-CMD-Obchod"
@@ -223,7 +252,7 @@ jobs:
           sync_apk "commanderservicestechnici-dot/Rai" "RAI-International-debug" "RAI.apk" || echo "::warning::RAI sa nepodarilo synchronizovať."
           # Datacho is published as a private GitHub Release instead of Actions artifacts
           # (avoids the source repository's artifact storage quota).
-          sync_release_apk "commanderservicestechnici-dot/Datacho" "latest" "Datacho-Technik.apk" "Datacho-Technik.apk" || echo "::warning::Datacho Technik sa nepodarilo synchronizovať; ponechávam predošlé verejné APK."
+          sync_datacho_release || echo "::warning::Datacho Technik sa nepodarilo synchronizovať; ponechávam predošlé verejné APK."
           sync_apk "commanderservicestechnici-dot/Aktivacia_Sim" "Aktivacia-SIM-debug" "Aktivacia-SIM.apk" || echo "::warning::Aktivácia SIM sa nepodarila synchronizovať."
 
           # Aplikácie, kde sa názov workflow/artefaktu mení medzi verziami.
@@ -247,6 +276,7 @@ jobs:
             downloads/Praca-Technikov-version.txt \
             downloads/RAI.apk \
             downloads/Datacho-Technik.apk \
+            downloads/Datacho-Technik-version.txt \
             downloads/Aktivacia-SIM.apk \
             downloads/CMD-Obchod.apk \
             downloads/CMD-Obchod-version.txt \
