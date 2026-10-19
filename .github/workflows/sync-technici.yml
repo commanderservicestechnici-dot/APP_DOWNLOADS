@@ -221,7 +221,9 @@ jobs:
 
           # Stabilné workflow artefakty.
           sync_apk "commanderservicestechnici-dot/Rai" "RAI-International-debug" "RAI.apk" || echo "::warning::RAI sa nepodarilo synchronizovať."
-          sync_apk "commanderservicestechnici-dot/Datacho" "Datacho-Technik-debug" "Datacho-Technik.apk" || echo "::warning::Datacho Technik sa nepodarilo synchronizovať."
+          # Datacho is published as a private GitHub Release instead of Actions artifacts
+          # (avoids the source repository's artifact storage quota).
+          sync_release_apk "commanderservicestechnici-dot/Datacho" "latest" "Datacho-Technik.apk" "Datacho-Technik.apk" || echo "::warning::Datacho Technik sa nepodarilo synchronizovať; ponechávam predošlé verejné APK."
           sync_apk "commanderservicestechnici-dot/Aktivacia_Sim" "Aktivacia-SIM-debug" "Aktivacia-SIM.apk" || echo "::warning::Aktivácia SIM sa nepodarila synchronizovať."
 
           # Aplikácie, kde sa názov workflow/artefaktu mení medzi verziami.
