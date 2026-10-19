@@ -1,6 +1,6 @@
 # HANDOFF — APP_DOWNLOADS
 
-Aktualizované: 2026-10-07
+Aktualizované: 2026-10-19
 
 ## Účel
 Verejný distribučný repozitár pre interné Commander APK. Zdrojové aplikácie môžu zostať privátne; telefóny sťahujú APK z verejného release `technici`.
@@ -10,6 +10,8 @@ Verejný distribučný repozitár pre interné Commander APK. Zdrojové aplikác
 - `.github/workflows/cleanup-actions.yml` — centrálne čistenie GitHub Actions runov.
 
 ## Synchronizácia APK
+Datacho Technik sa preberá zo súkromného GitHub Release `latest` v repozitári `Datacho` (asset `Datacho-Technik.apk`), nie z Actions artefaktu. Tento spôsob obchádza naplnenú kvótu úložiska GitHub Actions. Verejná cesta `technici/Datacho-Technik.apk` zostáva stabilná.
+
 `Sync technician APKs`:
 - automaticky približne každých 5 minút,
 - okamžite cez `repository_dispatch` event `sync-technici` zo zdrojových repozitárov,

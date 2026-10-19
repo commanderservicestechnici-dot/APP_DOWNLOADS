@@ -29,7 +29,7 @@ Používané zdroje:
 - `Podporovane_vozidla` – stabilný release `latest`
 - `ALL_APP` – stabilný release `latest`
 - `Rai` – posledný úspešný artifact z `android.yml`
-- `Datacho` – posledný úspešný artifact z `android.yml`
+- `Datacho` – stabilný súkromný GitHub Release `latest` (`Datacho-Technik.apk`); bez závislosti od kvóty Actions artefaktov
 - `Aktivacia_Sim` – posledný úspešný artifact z `android.yml`
 - `Bungi-Darts-Android` – APK z posledného úspešného workflow runu
 - `Nezabudni-Zoznam` – APK z posledného úspešného workflow runu
