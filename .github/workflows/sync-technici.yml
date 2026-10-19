@@ -59,8 +59,8 @@ jobs:
               --clobber
 
             APK="$TMPDIR/$ASSET"
-            if [ ! -f "$APK" ]; then
-              echo "V release $TAG sa nenašiel $ASSET pre $REPO"
+            if [ ! -s "$APK" ]; then
+              echo "V release $TAG sa nenašiel platný (neprázdny) $ASSET pre $REPO"
               return 1
             fi
 
