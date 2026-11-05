@@ -2,7 +2,7 @@ name: Sync technician APKs
 
 # Publishes the latest successful builds of managed Commander technician apps.
 # TC Darts v0.17.42: optional multilingual checkout voice + TTS packs, matched APK and version metadata.
-# Praca Technikov is copied from its stable `latest` release asset to avoid stale workflow artifacts. Current refresh: 1.10.15 (offline HW catalogue + matching version metadata).
+# Praca Technikov is copied from its stable `latest` release asset to avoid stale workflow artifacts. Current refresh: 1.10.16 (correct totals, technician header, tools, Android Back).
 on:
   push:
     branches: [ "main" ]
