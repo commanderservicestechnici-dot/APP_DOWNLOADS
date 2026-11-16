@@ -1,7 +1,7 @@
 name: Sync technician APKs
 
 # Publishes the latest successful builds of managed Commander technician apps.
-# TC Darts v0.17.44: verified Firebase-only HTTPS APK and matching version metadata (214).
+# TC Darts v0.17.45: verified Firebase-only lobby and diagnostics fix (215).
 # Praca Technikov is copied from its stable `latest` release asset to avoid stale workflow artifacts. Current refresh: 1.10.16 (correct totals, technician header, tools, Android Back).
 on:
   push:
